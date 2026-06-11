@@ -107,7 +107,7 @@ body{background:var(--dark);color:var(--white);font-family:var(--font);min-heigh
     <h1 class="lock-title">Sekarang<br><span>Ngapain?</span></h1>
     <p class="lock-sub">Panduan konkret untuk karyawan yang stuck, burnout, atau mau keluar.</p>
     <div class="don-lock">
-      <p>❤️ 10% dari setiap penjualan disumbangkan ke yayasan yang membutuhkan. Bukti dibagikan setiap bulan.</p>
+      <p>❤️ Setiap produk yang terjual — <b>10% langsung disumbangkan</b> ke yayasan yang membutuhkan. Bukan janji. Gue share buktinya setiap bulan.</p>
     </div>
     <input type="text" id="codeInput" class="lock-input" placeholder="KODE AKSES" maxlength="20" autocomplete="off">
     <div id="lockErr" class="lock-err"></div>
@@ -214,32 +214,55 @@ function actions(list){
 }
 
 function showSummary(kondisi, steps){
+  // Show "Lihat Ringkasan" button — user must press it first
+  // delay 2600 = 1200ms dgMsg typing + 1200ms dgMsg render + 200ms buffer
   setTimeout(()=>{
-    const el = document.createElement('div');
-    el.className = 'chat-msg';
-    const rows = steps.map((s,i)=>`<div class="summary-row"><span class="summary-key">${i+1}</span><span class="summary-val">${s}</span></div>`).join('');
-    el.innerHTML = `
-      <div class="summary-box">
-        <div class="summary-title">Ringkasan — The 40 Reset</div>
-        <div class="summary-row"><span class="summary-key">Kondisi</span><span class="summary-val">${kondisi}</span></div>
-        ${rows}
-      </div>
-      <a href="https://lynk.id/the_40_reset" class="cta-btn" target="_blank">Lihat Semua Tools The 40 Reset</a>
-      <div class="don-result">10% dari pembelian ini sudah disumbangkan ke yayasan yang membutuhkan.</div>
-    `;
-    cw().appendChild(el); scroll();
-    setTimeout(()=>{
-      dgMsg(`Kalau lo memutuskan bertahan, gue hormati.<br>Kalau lo memutuskan pergi, gue juga hormati.<br><br>Yang penting, keputusan itu lahir dari kejernihan. Bukan dari ketakutan.<br><br>— Dhimas Garendi`);
-      document.getElementById('topStep').textContent = 'Selesai';
-    }, 1500);
-  }, 1000);
+    const btnWrap = document.createElement('div');
+    btnWrap.className = 'opts-wrap';
+    btnWrap.style.marginLeft = '0';
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.style.borderColor = 'var(--gold)';
+    btn.style.color = 'var(--gold)';
+    btn.textContent = '📋 Lihat Ringkasan';
+    btn.onclick = ()=>{
+      btn.disabled = true;
+      btnWrap.remove();
+      userMsg('Lihat Ringkasan');
+
+      // Show summary box
+      setTimeout(()=>{
+        const el = document.createElement('div');
+        el.className = 'chat-msg';
+        const rows = steps.map((s,i)=>`<div class="summary-row"><span class="summary-key">${i+1}</span><span class="summary-val">${s}</span></div>`).join('');
+        el.innerHTML = `
+          <div class="summary-box">
+            <div class="summary-title">Ringkasan — The 40 Reset</div>
+            <div class="summary-row"><span class="summary-key">Kondisi</span><span class="summary-val">${kondisi}</span></div>
+            ${rows}
+          </div>
+          <a href="https://lynk.id/the_40_reset" class="cta-btn" target="_blank">Lihat Semua Tools The 40 Reset</a>
+          <div class="don-result">❤️ Setiap produk yang terjual — <b>10% langsung disumbangkan</b> ke yayasan yang membutuhkan. Bukan janji. Gue share buktinya setiap bulan.</div>
+        `;
+        cw().appendChild(el); scroll();
+
+        // Closing quote after summary
+        setTimeout(()=>{
+          dgMsg(`Kalau lo memutuskan bertahan, gue hormati.<br>Kalau lo memutuskan pergi, gue juga hormati.<br><br>Yang penting, keputusan itu datang dari tempat yang jernih — bukan dari emosi sesaat, bukan dari ketakutan, bukan dari keputusasaan.<br><br>— Dhimas Garendi`);
+          document.getElementById('topStep').textContent = 'Selesai';
+        }, 1500);
+      }, 400);
+    };
+    btnWrap.appendChild(btn);
+    cw().appendChild(btnWrap); scroll();
+  }, 2600);
 }
 
 // ══════════════════════════════
 // START
 // ══════════════════════════════
 function startChat(){
-  dgMsg(`Hei.<br><br>Gue Dhimas.<br><br>16 tahun gue di korporasi. Pernah jadi Head yang buat keputusan tentang orang — rekrut, promosi, sampai yang harus keluar. Sekarang gue di sisi lo.<br><br>Gue tidak akan ceramah. Gue akan tanya kondisi lo, dan kasih langkah yang bisa lo lakukan sekarang.<br><br>Lo lagi menghadapi apa?`);
+  dgMsg(`Hei.<br><br>Gue Dhimas.<br><br>16 tahun gue pernah bekerja di korporasi — sebagai karyawan dan sebagai Head of Department. Gue juga pernah ada di posisi lo. Pernah ambil keputusan untuk rekrut, promosikan orang, dan bahkan pernah diminta untuk manage out dan lay off orang.<br><br>Gue tidak akan ceramah. Gue akan tanya kondisi lo, dan kasih langkah yang bisa lo lakukan sekarang.<br><br>Lo lagi menghadapi apa?`);
   showOpts([
     {label:'1. Lingkungan kantor toxic', val:'toxic'},
     {label:'2. Ngerasa sedang di-manage out', val:'manageout'},
