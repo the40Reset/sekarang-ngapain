@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sekarang Ngapain? — The 40 Reset</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;
+  --dark:#0A0A0F;
+  --card:#111118;
+  --card2:#1A1A2A;
+  --border:#2A2A3A;
+  --white:#FFFFFF;
+  --muted:#AAAABC;
+  --red:#E05555;
+  --green:#1D9E75;
+  --yellow:#EF9F27;
+  --font:'Plus Jakarta Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--dark);color:var(--white);font-family:var(--font);min-height:100vh;font-size:16px;line-height:1.7;overflow-x:hidden}
+
+/* LOCK */
+#lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem}
+.lock-inner{width:100%;max-width:420px;text-align:center}
+.lock-tag{font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:2rem;font-weight:700}
+.lock-title{font-size:2.8rem;font-weight:900;line-height:1.1;margin-bottom:.75rem;color:var(--white)}
+.lock-title span{color:var(--gold)}
+.lock-sub{font-size:1rem;color:var(--muted);margin:0 0 2rem;font-weight:600;line-height:1.7}
+.lock-input{width:100%;padding:1.1rem;background:var(--card);border:2px solid var(--border);color:var(--white);font-size:1.1rem;font-family:var(--font);font-weight:700;letter-spacing:.2em;text-align:center;text-transform:uppercase;border-radius:8px;outline:none;margin-bottom:.75rem;transition:border-color .2s}
+.lock-input:focus{border-color:var(--gold)}
+.lock-input.err{border-color:var(--red)}
+.lock-btn{width:100%;padding:1.1rem;background:var(--gold);border:none;color:var(--dark);font-size:1rem;font-weight:800;font-family:var(--font);border-radius:8px;cursor:pointer;min-height:54px}
+.lock-err{color:var(--red);font-size:.9rem;margin-top:.5rem;min-height:1.2rem;font-weight:600}
+.lock-hint{margin-top:1.5rem;font-size:.85rem;color:var(--muted);font-weight:500}
+.lock-hint a{color:var(--gold);text-decoration:none;font-weight:700}
+.don-lock{background:rgba(201,168,76,.08);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:1.5rem;text-align:left}
+.don-lock p{font-size:.88rem;color:var(--white);line-height:1.7;font-weight:500}
+
+/* APP */
+#app{display:none}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.98);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{font-size:.9rem;color:var(--gold);font-weight:700;letter-spacing:.06em}
+.topbar-step{font-size:.82rem;color:var(--muted);font-weight:600}
+
+/* CHAT */
+.chat-wrap{max-width:580px;margin:0 auto;padding:1.5rem 1.5rem 8rem}
+.chat-msg{margin-bottom:1.2rem;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* DHIMAS MSG */
+.msg-dg{display:flex;gap:.75rem;align-items:flex-start}
+.dg-avatar{width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:var(--dark);flex-shrink:0;margin-top:2px}
+.dg-bubble{background:var(--card);border:1.5px solid var(--border);border-radius:0 12px 12px 12px;padding:1.1rem 1.3rem;max-width:88%;font-size:1rem;color:var(--white);line-height:1.75;font-weight:500}
+.dg-bubble b{color:var(--gold);font-weight:700}
+
+/* ACTION LIST */
+.act-list{margin-top:.9rem;border-top:1px solid var(--border);padding-top:.9rem}
+.act-item{display:flex;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.95rem;color:var(--white);font-weight:500;line-height:1.6}
+.act-item:last-child{border-bottom:none}
+.act-num{color:var(--gold);font-weight:800;flex-shrink:0;min-width:20px}
+
+/* USER MSG */
+.msg-user{display:flex;justify-content:flex-end;margin-bottom:1.2rem}
+.user-bubble{background:rgba(201,168,76,.12);border:1.5px solid rgba(201,168,76,.3);border-radius:12px 0 12px 12px;padding:.9rem 1.1rem;max-width:82%;font-size:1rem;color:var(--white);font-weight:600;line-height:1.6}
+
+/* OPTIONS */
+.opts-wrap{margin:1rem 0 1rem 52px}
+.opt-btn{display:block;width:100%;text-align:left;padding:1rem 1.2rem;background:var(--card);border:1.5px solid var(--border);color:var(--white);font-size:1rem;font-family:var(--font);font-weight:600;border-radius:8px;cursor:pointer;margin-bottom:.6rem;transition:all .15s;line-height:1.5;min-height:52px}
+.opt-btn:hover{border-color:var(--gold);color:var(--gold)}
+.opt-btn.selected{border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--gold)}
+.opt-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* YN BUTTONS */
+.yn-wrap{margin:1rem 0 1rem 52px;display:flex;gap:.75rem}
+.yn-btn{flex:1;padding:1rem;background:var(--card);border:1.5px solid var(--border);color:var(--white);font-size:1rem;font-family:var(--font);font-weight:700;border-radius:8px;cursor:pointer;min-height:52px;transition:all .15s}
+.yn-btn.ya{border-color:var(--green);color:var(--green);background:rgba(29,158,117,.1)}
+.yn-btn.tidak{border-color:var(--red);color:var(--red);background:rgba(224,85,85,.1)}
+.yn-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* TYPING */
+.typing-wrap{display:flex;gap:4px;padding:.6rem 0;align-items:center}
+.typing-wrap span{width:7px;height:7px;background:var(--muted);border-radius:50%;animation:bounce .8s infinite}
+.typing-wrap span:nth-child(2){animation-delay:.15s}
+.typing-wrap span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+
+/* SUMMARY */
+.summary-box{background:var(--card2);border:1.5px solid var(--gold);border-radius:12px;padding:1.5rem;margin:1rem 0}
+.summary-title{font-size:.75rem;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:1rem}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.92rem}
+.summary-row:last-child{border-bottom:none}
+.summary-key{color:var(--muted);font-weight:600;flex-shrink:0}
+.summary-val{font-weight:700;color:var(--white);text-align:right}
+.cta-btn{display:block;width:100%;padding:1.1rem;background:var(--gold);border:none;color:var(--dark);font-size:1rem;font-weight:800;font-family:var(--font);border-radius:8px;cursor:pointer;text-align:center;text-decoration:none;margin-top:1rem;min-height:54px}
+.don-result{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:1.1rem;margin-top:1rem;font-size:.9rem;color:var(--white);line-height:1.7;text-align:center;font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- LOCK -->
+<div id="lock">
+  <div class="lock-inner">
+    <div class="lock-tag">The 40 Reset · by Dhimas Garendi</div>
+    <h1 class="lock-title">Sekarang<br><span>Ngapain?</span></h1>
+    <p class="lock-sub">Panduan konkret untuk karyawan yang stuck, burnout, atau mau keluar.</p>
+    <div class="don-lock">
+      <p>❤️ 10% dari setiap penjualan disumbangkan ke yayasan yang membutuhkan. Bukti dibagikan setiap bulan.</p>
+    </div>
+    <input type="text" id="codeInput" class="lock-input" placeholder="KODE AKSES" maxlength="20" autocomplete="off">
+    <div id="lockErr" class="lock-err"></div>
+    <button class="lock-btn" onclick="checkCode()">Masuk</button>
+    <p class="lock-hint">Dapat kode dari The 40 Reset · <a href="https://lynk.id/the_40_reset" target="_blank">Beli di sini</a></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">The 40 Reset</div>
+    <div class="topbar-step" id="topStep">Sekarang Ngapain?</div>
+  </div>
+  <div class="chat-wrap" id="chatWrap"></div>
+</div>
+
+<script>
+const CODE = 'SURVIVETODAY';
+
+function checkCode(){
+  const v = document.getElementById('codeInput').value.toUpperCase().trim().replace(/\s/g,'');
+  if(v === CODE){
+    document.getElementById('lock').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    startChat();
+  } else {
+    const inp = document.getElementById('codeInput');
+    inp.classList.add('err');
+    document.getElementById('lockErr').textContent = 'Kode salah. Cek email dari The 40 Reset.';
+    setTimeout(()=>{ inp.classList.remove('err'); document.getElementById('lockErr').textContent=''; }, 3000);
+  }
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') checkCode(); });
+
+const cw = ()=> document.getElementById('chatWrap');
+const scroll = ()=> setTimeout(()=> window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),100);
+
+function dgMsg(html, delay=0){
+  setTimeout(()=>{
+    const t = document.createElement('div');
+    t.className = 'chat-msg msg-dg';
+    t.id = 'typing-now';
+    t.innerHTML = `<div class="dg-avatar">DG</div><div class="dg-bubble"><div class="typing-wrap"><span></span><span></span><span></span></div></div>`;
+    cw().appendChild(t); scroll();
+    setTimeout(()=>{
+      t.remove();
+      const el = document.createElement('div');
+      el.className = 'chat-msg msg-dg';
+      el.innerHTML = `<div class="dg-avatar">DG</div><div class="dg-bubble">${html}</div>`;
+      cw().appendChild(el); scroll();
+    }, 1200);
+  }, delay);
+}
+
+function userMsg(text){
+  const el = document.createElement('div');
+  el.className = 'chat-msg msg-user';
+  el.innerHTML = `<div class="user-bubble">${text}</div>`;
+  cw().appendChild(el); scroll();
+}
+
+function showOpts(opts, onSelect, delay=1600){
+  setTimeout(()=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'opts-wrap';
+    opts.forEach(o=>{
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = o.label;
+      btn.onclick = ()=>{
+        wrap.querySelectorAll('.opt-btn').forEach(b=>{ b.disabled=true; });
+        btn.classList.add('selected');
+        userMsg(o.label);
+        setTimeout(()=>{ wrap.remove(); onSelect(o.val); }, 400);
+      };
+      wrap.appendChild(btn);
+    });
+    cw().appendChild(wrap); scroll();
+  }, delay);
+}
+
+function showYN(q, onYa, onTidak, delay=1600){
+  setTimeout(()=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'yn-wrap';
+    ['Ya','Tidak'].forEach(label=>{
+      const btn = document.createElement('button');
+      btn.className = `yn-btn ${label==='Ya'?'ya':'tidak'}`;
+      btn.textContent = label;
+      btn.onclick = ()=>{
+        wrap.querySelectorAll('.yn-btn').forEach(b=>b.disabled=true);
+        userMsg(label);
+        setTimeout(()=>{ wrap.remove(); label==='Ya'?onYa():onTidak(); }, 400);
+      };
+      wrap.appendChild(btn);
+    });
+    cw().appendChild(wrap); scroll();
+  }, delay);
+}
+
+function actions(list){
+  return `<div class="act-list">${list.map((a,i)=>`<div class="act-item"><span class="act-num">${i+1}.</span><span>${a}</span></div>`).join('')}</div>`;
+}
+
+function showSummary(kondisi, steps){
+  setTimeout(()=>{
+    const el = document.createElement('div');
+    el.className = 'chat-msg';
+    const rows = steps.map((s,i)=>`<div class="summary-row"><span class="summary-key">${i+1}</span><span class="summary-val">${s}</span></div>`).join('');
+    el.innerHTML = `
+      <div class="summary-box">
+        <div class="summary-title">Ringkasan — The 40 Reset</div>
+        <div class="summary-row"><span class="summary-key">Kondisi</span><span class="summary-val">${kondisi}</span></div>
+        ${rows}
+      </div>
+      <a href="https://lynk.id/the_40_reset" class="cta-btn" target="_blank">Lihat Semua Tools The 40 Reset</a>
+      <div class="don-result">10% dari pembelian ini sudah disumbangkan ke yayasan yang membutuhkan.</div>
+    `;
+    cw().appendChild(el); scroll();
+    setTimeout(()=>{
+      dgMsg(`Kalau lo memutuskan bertahan, gue hormati.<br>Kalau lo memutuskan pergi, gue juga hormati.<br><br>Yang penting, keputusan itu lahir dari kejernihan. Bukan dari ketakutan.<br><br>— Dhimas Garendi`);
+      document.getElementById('topStep').textContent = 'Selesai';
+    }, 1500);
+  }, 1000);
+}
+
+// ══════════════════════════════
+// START
+// ══════════════════════════════
+function startChat(){
+  dgMsg(`Hei.<br><br>Gue Dhimas.<br><br>16 tahun gue di korporasi. Pernah jadi Head yang buat keputusan tentang orang — rekrut, promosi, sampai yang harus keluar. Sekarang gue di sisi lo.<br><br>Gue tidak akan ceramah. Gue akan tanya kondisi lo, dan kasih langkah yang bisa lo lakukan sekarang.<br><br>Lo lagi menghadapi apa?`);
+  showOpts([
+    {label:'1. Lingkungan kantor toxic', val:'toxic'},
+    {label:'2. Ngerasa sedang di-manage out', val:'manageout'},
+    {label:'3. Khawatir kena layoff', val:'layoff'},
+    {label:'4. Kondisi kesehatan mulai terdampak', val:'kesehatan'},
+    {label:'5. Mental sudah mulai kena', val:'mental'},
+    {label:'6. Mau resign', val:'resign'},
+    {label:'7. Stuck — karir tidak kemana-mana', val:'stuck'},
+  ], handleKondisi);
+}
+
+// ══════════════════════════════
+// TOXIC
+// ══════════════════════════════
+function handleKondisi(val){
+  if(val==='toxic'){
+    dgMsg(`Ada kantor yang memang tidak bisa diubah. Bosnya tidak akan berubah. Sistemnya tidak akan berubah.<br><br>Dan semakin lama lo berharap semuanya berubah — semakin banyak yang terkuras dari diri lo.<br><br>Yang bisa lo ubah cuma satu: seberapa dalam lo biarkan itu masuk.<br><br>Ini bukan soal kuat atau lemah. Ini soal sadar.<br><br>Toxicnya karena apa?`);
+    showOpts([
+      {label:'Bos langsung yang bermasalah', val:'toxic_bos'},
+      {label:'Lingkungan dan rekan kerja yang toxic', val:'toxic_lingkungan'},
+      {label:'Keduanya — bos dan lingkungan', val:'toxic_both'},
+    ], handleToxicType);
+
+  } else if(val==='manageout'){
+    dgMsg(`Gue pernah ada di sisi yang buat keputusan ini.<br><br>Yang selalu bikin gue tidak nyaman adalah satu hal — orang yang sedang mengalami ini hampir tidak pernah tahu. Mereka ngerasa ada yang aneh tapi tidak bisa namain apa.<br><br>Mereka bukan paranoid. Dan lo bukan paranoid.<br><br>Dari tanda-tanda ini, mana yang sudah lo rasakan?`);
+    showOpts([
+      {label:'Bos tiba-tiba micromanage padahal sebelumnya percaya', val:'mo_micro'},
+      {label:'Nama lo jarang muncul di meeting penting', val:'mo_meeting'},
+      {label:'Target naik tidak masuk akal tiba-tiba', val:'mo_target'},
+      {label:'Kena PIP padahal track record sebelumnya bersih', val:'mo_pip'},
+      {label:'Semua tanda di atas sudah terjadi', val:'mo_all'},
+    ], handleManageOut);
+
+  } else if(val==='layoff'){
+    dgMsg(`Layoff bukan selalu soal performa lo. Kadang kondisi bisnisnya yang berubah.<br><br>Dan ada tanda-tanda yang bisa lo baca jauh sebelum pengumuman resmi keluar.<br><br>Dari kondisi perusahaan sekarang, mana yang lo lihat?`);
+    showOpts([
+      {label:'Ada konsultan masuk untuk evaluasi struktur', val:'lo_konsultan'},
+      {label:'Hiring freeze — posisi kosong tidak diisi', val:'lo_freeze'},
+      {label:'Budget dipotong konsisten tanpa penjelasan', val:'lo_budget'},
+      {label:'Leadership tiba-tiba susah diakses, komunikasi tertutup', val:'lo_silent'},
+      {label:'Beberapa tanda di atas sudah terjadi', val:'lo_many'},
+    ], handleLayoff);
+
+  } else if(val==='kesehatan'){
+    dgMsg(`Tubuh lo tidak bohong.<br><br>Maag yang tidak kunjung sembuh. Migrain setiap Senin. Tidur yang tidak pernah cukup.<br><br>Lo bilang ini karena kecapekan. Tapi sudah berapa lama lo bilang ini biasa?<br><br>Gejala fisik lo sudah berlangsung berapa lama?`);
+    showOpts([
+      {label:'Baru mulai — kurang dari 1 bulan', val:'kes_baru'},
+      {label:'Sudah 1-3 bulan', val:'kes_mid'},
+      {label:'Lebih dari 3 bulan', val:'kes_lama'},
+    ], handleKesehatan);
+
+  } else if(val==='mental'){
+    dgMsg(`Gue tidak akan pura-pura ini mudah.<br><br>Setelah sekian lama di lingkungan yang menguras, ada bagian dari lo yang mulai percaya narasi yang sistem itu ciptakan tentang lo.<br><br>Bahwa lo tidak cukup baik. Bahwa lo bermasalah.<br><br>Ini bukan kelemahan lo. Ini hasil dari terlalu lama di tempat yang salah.<br><br>Yang lo rasakan sekarang lebih ke mana?`);
+    showOpts([
+      {label:'Anxious — kepikiran kerjaan terus bahkan saat libur', val:'men_anxious'},
+      {label:'Kehilangan motivasi — semua terasa percuma', val:'men_motivasi'},
+      {label:'Mulai meragukan diri sendiri — merasa tidak mampu', val:'men_ragu'},
+      {label:'Semua di atas sudah terasa', val:'men_all'},
+    ], handleMental);
+
+  } else if(val==='resign'){
+    dgMsg(`Mau resign itu wajar. Tapi resign yang salah bisa lebih mahal dari bertahan yang benar.<br><br>Banyak orang resign dan meninggalkan uang di meja — atau keluar dengan cara yang membakar jembatan yang tidak perlu dibakar.<br><br>Ini keputusan yang sudah dipertimbangkan matang atau masih dalam tahap emosi?`);
+    showOpts([
+      {label:'Sudah dipertimbangkan matang, ini keputusan yang jernih', val:'res_matang'},
+      {label:'Jujur, ini masih banyak campuran emosi', val:'res_emosi'},
+    ], handleResign);
+
+  } else if(val==='stuck'){
+    dgMsg(`Stuck itu salah satu kondisi paling menguras — karena tidak ada yang dramatis. Tidak ada yang bisa lo ceritakan ke orang lain dengan mudah.<br><br>Lo cuma tidak kemana-mana.<br><br>Dan gue tidak akan bilang "follow your passion" — lo punya cicilan.<br><br>Stuck-nya di mana?`);
+    showOpts([
+      {label:'Karir tidak naik-naik sudah lama', val:'st_karir'},
+      {label:'Gaji tidak berkembang', val:'st_gaji'},
+      {label:'Tidak tahu mau kemana setelah ini', val:'st_arah'},
+      {label:'Semua pilihan terasa sama buruknya', val:'st_all'},
+    ], handleStuck);
+  }
+}
+
+// ══════════════════════════════
+// TOXIC
+// ══════════════════════════════
+function handleToxicType(val){
+  const isBos = val==='toxic_bos';
+  const isLingkungan = val==='toxic_lingkungan';
+  const isBoth = val==='toxic_both';
+
+  let msg = '';
+  if(isBos) msg = `Bos yang bermasalah itu berat. Karena lo tidak bisa pilih bos lo. Dan hampir tidak ada yang bisa lo lakukan untuk mengubah orang yang sudah di posisi itu.<br><br>Yang bisa lo lakukan adalah melindungi diri lo sendiri sambil nyiapin jalan keluar.`;
+  if(isLingkungan) msg = `Lingkungan yang toxic itu bahkan lebih berbahaya dari bos yang bermasalah — karena datangnya dari banyak arah dan lebih susah diidentifikasi.<br><br>Dan perlahan lo mulai percaya bahwa kondisi itu normal.`;
+  if(isBoth) msg = `Dua-duanya sekaligus — bos dan lingkungan. Ini yang paling menguras.<br><br>Karena tidak ada tempat aman di sana. Dan setiap hari masuk ke sana punya harga yang mahal.`;
+
+  dgMsg(`${msg}<br><br>Sudah berapa lama lo di kondisi ini?`);
+  showOpts([
+    {label:'Kurang dari 6 bulan', val:'tx_short'},
+    {label:'6 bulan sampai 1 tahun', val:'tx_mid'},
+    {label:'Lebih dari 1 tahun', val:'tx_long'},
+  ], (dur)=>{
+    const warning = dur==='tx_long' ? `Lebih dari setahun di kondisi ini bukan hal kecil. Kemungkinan besar dampaknya sudah lebih jauh dari yang lo sadari — ke kesehatan, ke keluarga, ke cara lo melihat diri sendiri.<br><br>` : '';
+    dgMsg(`${warning}Ini yang harus lo lakukan sekarang:${actions([
+      'Stop curhat soal kantor ke siapapun di dalam kantor. Siapapun. Ini bukan soal tidak percaya — ini soal melindungi diri lo.',
+      'Matikan notifikasi kantor setelah jam 8 malam. Mulai malam ini. Bukan besok.',
+      'Dokumentasikan yang tidak beres — email, keputusan, perlakuan yang tidak fair. Tanggal dan detail. Ini pegangan lo.',
+      'Kerjaan adalah kerjaan — bukan identitas lo. Latih diri untuk tidak bawa itu lebih dalam dari yang diperlukan.',
+      'Update LinkedIn diam-diam — foto dan headline. Bukan pengumuman, ini persiapan.',
+      'Hitung runway lo. Tabungan dibagi pengeluaran bulanan. Angka itu yang menentukan kapan lo bisa keluar.'
+    ])}`);
+    showSummary('Toxic Environment', [
+      'Matikan notif kantor jam 8 malam mulai malam ini',
+      'Stop curhat ke siapapun di dalam kantor',
+      'Dokumentasikan yang tidak beres — tanggal dan detail',
+      'Kerjaan bukan identitas lo — buat jarak psikologis',
+      'Update LinkedIn diam-diam sekarang',
+      'Hitung runway lo hari ini'
+    ]);
+  });
+}
+
+// ══════════════════════════════
+// MANAGE OUT
+// ══════════════════════════════
+function handleManageOut(val){
+  const banyak = val==='mo_all' || val==='mo_pip';
+  if(banyak){
+    dgMsg(`Gue harus jujur — ini pola yang gue kenal.<br><br>Dan ini yang paling penting, yang paling banyak orang salah lakukan:<br><br><b>Jangan resign duluan.</b><br><br>Kalau lo resign sendiri — lo tidak dapat pesangon. Biarkan mereka yang keluarkan lo. Pesangon lo jauh lebih besar dari yang lo kira.<br><br>Ini yang harus lo lakukan sekarang:${actions([
+      'Dokumentasikan semua mulai hari ini — email, perubahan jobdesc, keputusan yang tidak fair. Tanggal dan detail. Ini bukti lo.',
+      'Hitung pesangon yang jadi hak lo sekarang. Jangan nego tanpa tahu angkanya dulu.',
+      'Jangan tanda tangan dokumen apapun dari HR sebelum lo baca dan pahami isinya.',
+      'Update CV dan LinkedIn diam-diam — jangan announce ke siapapun di kantor.',
+      'Apply ke minimal 3 posisi di luar — bukan untuk langsung pindah, tapi untuk tahu nilai pasar lo sekarang.',
+      'Hubungi orang yang bisa jadi referensi lo — jangan tunggu sampai lo butuh.'
+    ])}`);
+  } else {
+    dgMsg(`Ada sinyal yang perlu lo perhatikan. Belum pasti — tapi jangan diam.<br><br>Ini yang harus lo lakukan sekarang:${actions([
+      'Dokumentasikan dari sekarang — email, perubahan, keputusan. Tidak ada ruginya.',
+      'Hitung pesangon yang jadi hak lo — tahu angkanya sebelum lo butuhkan.',
+      'Update CV dan LinkedIn diam-diam.',
+      'Apply ke beberapa posisi di luar untuk tahu nilai pasar lo sekarang.',
+      'Jangan resign duluan — kalau memang arahnya ke sana, biarkan mereka yang keluarkan lo.',
+      'Hubungi orang yang bisa jadi referensi lo sekarang, sebelum terlambat.'
+    ])}`);
+  }
+  showSummary('Manage Out', [
+    'Jangan resign duluan — biarkan mereka yang keluarkan lo',
+    'Dokumentasikan semua mulai hari ini',
+    'Hitung pesangon yang jadi hak lo',
+    'Jangan tanda tangan apapun sebelum baca isinya',
+    'Update CV dan LinkedIn diam-diam',
+    'Siapkan referensi sekarang'
+  ]);
+}
+
+// ══════════════════════════════
+// LAYOFF
+// ══════════════════════════════
+function handleLayoff(val){
+  const serius = val==='lo_many' || val==='lo_konsultan';
+  const msg = serius
+    ? `Ini sinyal yang serius. Konsultan tidak dibayar mahal untuk memberikan selamat — mereka dibayar untuk menemukan inefisiensi. Dan inefisiensi yang paling mudah dipotong adalah orang.<br><br>Lo perlu siapkan diri sebelum pengumuman resmi keluar.`
+    : `Ada sinyal yang perlu lo perhatikan. Layoff jarang datang tanpa tanda-tanda — dan lo sudah mulai melihatnya.<br><br>Lebih baik siapkan diri sekarang daripada kaget nanti.`;
+
+  dgMsg(`${msg}<br><br>Ini yang harus lo lakukan sekarang:${actions([
+    'Update CV sekarang — dengan achievement nyata, bukan daftar tanggung jawab.',
+    'Update LinkedIn — foto, headline, dan about section. Diam-diam, tidak perlu announce.',
+    'Aktifkan network lo — hubungi orang yang genuine bisa jadi referensi atau informasi lowongan.',
+    'Hitung runway lo — tabungan dibagi pengeluaran bulanan. Tahu angkanya sebelum lo butuhkan.',
+    'Simpan semua dokumen bukti kontribusi lo — email apresiasi, target yang tercapai, project yang berhasil.',
+    'Apply ke beberapa posisi di luar untuk tahu nilai pasar lo sekarang. Ini bukan pengkhianatan — ini persiapan.'
+  ])}`);
+  showSummary('Ancaman Layoff', [
+    'Update CV dengan achievement nyata sekarang',
+    'Update LinkedIn diam-diam',
+    'Aktifkan network dan hubungi referensi potensial',
+    'Hitung runway lo hari ini',
+    'Simpan dokumen bukti kontribusi lo',
+    'Apply ke luar untuk tahu nilai pasar lo'
+  ]);
+}
+
+// ══════════════════════════════
+// KESEHATAN
+// ══════════════════════════════
+function handleKesehatan(val){
+  const lama = val==='kes_lama';
+  const warning = lama ? `Lebih dari 3 bulan itu bukan kecapekan biasa.<br><br>Tubuh lo sudah bicara cukup lama — dan lo sudah terlalu lama bilang ini biasa.<br><br>` : ``;
+
+  dgMsg(`${warning}Tidak ada kerjaan yang worth kehilangan kesehatan lo. Tidak satu pun.<br><br>Ini yang harus lo lakukan sekarang:${actions([
+    lama ? 'Pergi ke dokter sekarang — bukan minggu depan, bukan bulan depan. Ini bukan kemewahan, ini keharusan.' : 'Kalau gejala sudah berlangsung lebih dari 2 minggu tanpa membaik — pergi ke dokter.',
+    'Matikan notifikasi kantor setelah jam 8 malam. Mulai malam ini.',
+    'Tidur 7-8 jam. Ini bukan pilihan — ini kebutuhan dasar yang tidak bisa dinegosiasi.',
+    'Jalan kaki 20 menit setiap hari. Tidak perlu gym, tidak perlu lari. Cukup jalan.',
+    'Kurangi kafein — kopi dan energi drink yang lo pakai untuk bertahan itu memperburuk kondisi fisik lo.',
+    'Ingat: tubuh yang rusak tidak bisa membangun apapun setelah resign. Jaga sekarang.'
+  ])}`);
+  showSummary('Kesehatan', [
+    'Pergi ke dokter sekarang kalau gejala sudah lebih dari 2 minggu',
+    'Matikan notif kantor jam 8 malam mulai malam ini',
+    'Tidur 7-8 jam — tidak bisa dinegosiasi',
+    'Jalan kaki 20 menit setiap hari',
+    'Kurangi kafein',
+    'Tubuh sehat adalah modal utama setelah resign'
+  ]);
+}
+
+// ══════════════════════════════
+// MENTAL
+// ══════════════════════════════
+function handleMental(val){
+  const serius = val==='men_all' || val==='men_ragu';
+  const opening = serius
+    ? `Ketika lo mulai meragukan diri sendiri di tempat yang tidak pernah menghargai lo — itu bukan tanda bahwa lo memang tidak layak. Itu tanda bahwa lo sudah terlalu lama di tempat yang salah.<br><br>Dan kondisi lo sekarang perlu ditangani dengan serius.`
+    : `Yang lo rasakan itu nyata. Dan wajar — ini bukan soal lemah atau kuat.`;
+
+  dgMsg(`${opening}<br><br>Ini yang harus lo lakukan sekarang:${actions([
+    'Bedakan: mana ketakutan yang valid dan mana yang diciptakan sistem. Ketakutan soal finansial itu valid dan bisa dihitung. Ketakutan bahwa lo tidak akan sukses di luar sana — itu narasi sistem yang perlu dipertanyakan.',
+    'Tulis satu hal yang lo berhasil lakukan dengan baik hari ini. Sekecil apapun. Lakukan ini setiap hari.',
+    'Hubungi satu orang yang mengenal lo sebelum karir ini — yang tahu lo bukan cuma dari jabatan lo.',
+    'Matikan notifikasi kantor setelah jam 8 malam. Kepala lo butuh jeda nyata.',
+    'Cari satu aktivitas yang membuat lo merasa hidup — di luar kerjaan. Satu saja cukup untuk mulai.',
+    serius ? 'Pertimbangkan untuk bicara ke psikolog atau konselor. Ini bukan kelemahan — ini keputusan yang cerdas.' : 'Kalau kondisi mulai mengganggu fungsi sehari-hari — pertimbangkan untuk bicara ke profesional.'
+  ])}`);
+  showSummary('Kondisi Mental', [
+    'Bedakan ketakutan valid vs narasi sistem',
+    'Tulis satu hal yang berhasil setiap hari',
+    'Hubungi orang yang kenal lo sebelum karir ini',
+    'Matikan notif kantor jam 8 malam',
+    'Cari satu aktivitas yang membuat lo merasa hidup',
+    'Pertimbangkan bicara ke profesional kalau sudah berat'
+  ]);
+}
+
+// ══════════════════════════════
+// RESIGN
+// ══════════════════════════════
+function handleResign(val){
+  if(val==='res_emosi'){
+    dgMsg(`Gue tidak bilang lo salah mau resign. Tapi ada satu aturan yang gue pegang setelah 16 tahun:<br><br><b>Jangan ambil keputusan resign dalam 72 jam pertama setelah emosi besar.</b><br><br>Bukan karena lo harus bertahan. Tapi karena keputusan yang dibuat dari emosi punya konsekuensi yang harus ditanggung dengan kepala dingin — dan itu jauh lebih berat.<br><br>Kalau setelah 72 jam lo masih mau resign — itu keputusan yang lebih jernih. Dan gue akan bantu lo siapkan dengan benar.<br><br>Sekarang, apa yang paling bikin lo mau resign?`);
+    showOpts([
+      {label:'Kondisi kantor sudah tidak tertahankan', val:'res_lanjut'},
+      {label:'Sudah dapat offer yang lebih baik', val:'res_offer'},
+      {label:'Mau mulai bisnis atau freelance', val:'res_lanjut'},
+    ], ()=> lanjutResign());
+  } else {
+    lanjutResign();
+  }
+}
+
+function lanjutResign(){
+  dgMsg(`Bagus. Sekarang gue mau pastiin lo keluar dengan benar — tidak ada yang tertinggal.<br><br>THR lo sudah cair?`);
+  showYN(
+    'THR sudah cair?',
+    ()=>{
+      dgMsg(`Bagus. Bonus tahunan sudah cair?`);
+      showYN('Bonus sudah cair?',
+        ()=>{
+          dgMsg(`Hak cuti yang belum diambil sudah diklaim atau diuangkan?`);
+          showYN('Cuti sudah diklaim?',
+            ()=>{ finishResign(true); },
+            ()=>{ dgMsg(`Cek kontrak atau tanya HR — sisa cuti seringkali bisa diuangkan. Jangan tinggalkan hak lo ini.`); setTimeout(()=>finishResign(false),1500); }
+          );
+        },
+        ()=>{ dgMsg(`Kalau ada bonus tahunan yang belum cair — tahan dulu surat resign sampai bonus itu cair. Ini uang yang jadi hak lo.`); setTimeout(()=>finishResign(false),1500); }
+      );
+    },
+    ()=>{ dgMsg(`THR belum cair — tahan surat resign sampai THR cair. Ini hak lo yang tidak perlu direlakan.`); setTimeout(()=>finishResign(false),1500); }
+  );
+}
+
+function finishResign(siap){
+  const msg = siap
+    ? `Hak-hak lo sudah aman. Sekarang ini yang perlu lo siapkan sebelum submit surat resign:`
+    : `Sambil lo tunggu hak-hak itu, siapkan ini dulu:`;
+
+  dgMsg(`${msg}${actions([
+    'Pastikan dana bertahan lo minimal 12 bulan pengeluaran. Ini yang paling menentukan — orang yang resign dengan dana cukup buat keputusan jauh lebih baik dari yang resign dalam kepanikan.',
+    'Surat resign: singkat, profesional, tidak emosional. Tidak perlu alasan panjang. Tidak perlu curhat. Cukup tanggal resign dan ucapan terima kasih yang tulus.',
+    'Hitung notice period di kontrak lo — pastiin tanggal terakhir lo sesuai ketentuan.',
+    'Siapkan handover yang baik — bukan untuk perusahaan, tapi untuk reputasi lo sendiri. Dunia lebih kecil dari yang lo kira.',
+    'Update CV sekarang dengan achievement nyata — ini yang recruiter lihat dalam 6 detik pertama.',
+    'Update LinkedIn — foto, headline, about. Ini investasi untuk langkah berikutnya.',
+    'Rencana 90 hari pertama setelah resign — bulan 1 stabilkan, bulan 2 bangun, bulan 3 putuskan.'
+  ])}`);
+  showSummary('Rencana Resign', [
+    'Pastikan dana bertahan minimal 12 bulan pengeluaran sebelum resign',
+    'Pastikan THR dan bonus sudah cair sebelum submit resign',
+    'Klaim hak cuti yang belum diambil',
+    'Surat resign: singkat, profesional, tidak emosional',
+    'Update CV dengan achievement nyata',
+    'Siapkan rencana 90 hari pertama setelah keluar'
+  ]);
+}
+
+// ══════════════════════════════
+// STUCK
+// ══════════════════════════════
+function handleStuck(val){
+  dgMsg(`Stuck bukan berarti lo tidak punya pilihan. Stuck berarti lo belum punya informasi yang cukup untuk memilih.<br><br>Dan gue tidak akan suruh lo resign — lo punya tanggungan.<br><br>Ini yang harus lo lakukan sekarang:${actions([
+    'Riset nilai pasar lo — apply ke 3 posisi di luar. Bukan untuk langsung pindah. Tapi untuk tahu harga lo sekarang. Banyak orang kaget ternyata nilai mereka jauh lebih tinggi dari yang mereka kira.',
+    'Update CV dengan achievement — bukan daftar kerjaan. Satu kalimat achievement yang kuat bisa beda jutaan rupiah di offer berikutnya.',
+    'Update LinkedIn — foto, headline, about. Rekruter cari orang secara aktif di sana.',
+    'Identifikasi satu skill yang bisa lo monetize di luar jam kerja. Income sampingan sekecil apapun mengubah posisi tawar lo.',
+    'Hitung runway lo — kalau resign sekarang, secara finansial lo bisa bertahan berapa bulan? Angka itu yang kasih lo kejelasan kapan bisa bergerak.',
+    'Tentukan deadline keputusan — kapan lo harus buat keputusan tentang kondisi ini. Tanpa deadline, stuck bisa jadi permanen.'
+  ])}`);
+  showSummary('Stuck', [
+    'Apply ke 3 posisi di luar untuk tahu nilai pasar lo',
+    'Update CV dengan achievement nyata',
+    'Update LinkedIn sekarang',
+    'Identifikasi satu skill yang bisa dimonetize',
+    'Hitung runway lo hari ini',
+    'Tentukan deadline kapan harus buat keputusan'
+  ]);
+}
+</script>
+</body>
+</html>
